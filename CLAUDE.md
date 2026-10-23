@@ -21,8 +21,15 @@ Sitio de una página de Michi Cake (repostería casera en Puebla). Es una carta 
 
 ## Publicar
 
+El proyecto de Cloudflare Pages `michicake` es de **subida directa**, no está conectado a Git: un push a GitHub no lo publica. Para publicar, desde esta carpeta:
+
 ```bash
-npx wrangler@4 pages deploy public --project-name michicake --branch main
+npx wrangler@4 pages deploy public --project-name michicake --branch main --commit-hash "$(git rev-parse HEAD)"
 ```
+
+- Va **sin `--force`**. Ese flag solo se usó una vez para crear el proyecto en Pages clásico, porque wrangler 4.15x intentaba mandarlo a Workers.
+- La sesión es OAuth de wrangler (cuenta marketing@689rigs.com). Wrangler la busca en `~/.wrangler/config/default.toml`; si existe la carpeta vieja `~/.wrangler`, no lee la de `AppData/xdg.config`. Si dice "Not logged in", copia la de AppData o corre `npx wrangler@4 login`.
+- Ese token sirve para desplegar, pero no para DNS ni para dominios propios. Los dominios se conectan desde el panel (Workers & Pages → michicake → Custom domains).
+- El repo `github.com/SrSleek/michicake-web` (público) es respaldo y control de versiones.
 
 Antes de publicar se revisa en local (`python -m http.server 8731` dentro de `public/`), en escritorio (1280 px) y en celular (390 px).
